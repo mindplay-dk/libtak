@@ -42,6 +42,21 @@ test(`can parse PTN move notations`, () => {
 
   // Move 5 stones from e4 toward c4, dropping 2 and then 3 as you move:
   expect(parseTurn('5e4<23')).toEqual<Move>(move(4, 3, Left, [2, 3]))
+
+  // Move a single stone from a1 to b1 (default count 1, default dropcounts [1]):
+  expect(parseTurn('a1>')).toEqual<Move>(move(0, 0, Right, [1]))
+  
+  // Move 4 stones from c3 to d3 (all dropped on first square):
+  expect(parseTurn('4c3>')).toEqual<Move>(move(2, 2, Right, [4]))
+
+  // Move 3 stones from b2 up, dropping 1 on each of b3, b4, b5:
+  expect(parseTurn('3b2+111')).toEqual<Move>(move(1, 1, Up, [1, 1, 1]))
+
+  // Move 2 stones from d4 down to d3, dropping both on d3:
+  expect(parseTurn('2d4-2')).toEqual<Move>(move(3, 3, Down, [2]))
+
+  // Move 5 stones from e4 left toward c4, dropping 2 on d4 and 3 on c4:
+  expect(parseTurn('5e4<23')).toEqual<Move>(move(4, 3, Left, [2, 3]))
 })
 
 test('rejects invalid PTN notations', () => {
