@@ -5,9 +5,9 @@ export type Stone = {
   type: StoneType
 }
 
-export const FlatStone = 'F' as const
-export const StandingStone = 'S' as const
-export const CapStone = 'C' as const
+export const FlatStone = 'F'
+export const StandingStone = 'S'
+export const CapStone = 'C'
 
 export type FlatStone = typeof FlatStone
 export type StandingStone = typeof StandingStone

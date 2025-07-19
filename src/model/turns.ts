@@ -1,24 +1,29 @@
 import { Position } from "./board.ts"
 import { StoneType } from "./stones"
 
-type Turn = Move | Place
+export type Turn = Move | Place
 
-type Place = {
+export type Place = {
   type: 'place'
   stone: StoneType
   position: Position
 }
 
-type Move = {
+export type Move = {
   type: 'move'
-  square: Position
+  fromPosition: Position
   direction: Direction
-  drops: number[]
+  dropcounts: number[]
 }
 
-type Up = '+'
-type Down = '-'
-type Left = '<'
-type Right = '>'
+export const Up = '+'
+export const Down = '-'
+export const Left = '<'
+export const Right = '>'
 
-type Direction = Up | Down | Left | Right
+export type Up = typeof Up
+export type Down = typeof Down
+export type Left = typeof Left
+export type Right = typeof Right
+
+export type Direction = Up | Down | Left | Right
