@@ -1,8 +1,9 @@
 import { test, expect, assert } from "vitest"
-import { parseTurn } from "./ptn"
+import { parsePTNData, parseTurn } from "./ptn"
 import { Direction, Down, Left, Move, Place, Right, Turn, Up } from "../model/turns"
 import { RankNum, Position, FileNum } from "../model/board"
 import { CapStone, FlatStone, StandingStone, Stone, StoneType } from "../model/stones"
+import dedent from "dedent"
 
 const position = (file: number, rank: number): Position =>
   ({ file: file as FileNum, rank: rank as RankNum })
@@ -105,4 +106,78 @@ test('rejects invalid PTN notations', () => {
   expect(() => parseTurn('>1')).toThrow()
   // Count but missing square
   expect(() => parseTurn('2>')).toThrow()
+})
+
+test(`can parse PTN file`, () => {
+  const ptnFileContents = dedent`
+    [Player1 "Bob"]
+    [Player2 "Billy \"Bob\""]
+    [Result "R-0"]
+    [Size "6"]
+
+    1. a6 f6
+    2. {comment1} { comment 2 } d4 c4 { comment 3 }
+    3. d3 c3; comment 4
+    4. d5 c5 ; comment 5
+    5. d2 Ce4
+    6. c2 e3
+    7. e2 b2
+    8. Cb3 1e4<1
+    9. 1d3<1 Sd1
+    10. a3' 1d1+1
+    11. Sd3?! 1d4-*
+  `
+
+  const ptnData = parsePTNData(ptnFileContents)
+
+  expect(ptnData.metadata).toEqual({ Player1: 'Bob', Player2: 'Billy "Bob"', Result: 'R-0', Size: '6' })
+  
+  expect(ptnData.turns.length).toBe(22)
+
+  expect(ptnData.turns[0]).toEqual(place(0, 5)) // 1. a6
+  expect(ptnData.turns[1]).toEqual(place(5, 5)) // 1. f6
+  expect(ptnData.turns[2]).toEqual(place(3, 3)) // 2. d4
+  expect(ptnData.turns[3]).toEqual(place(2, 3)) // 2. c4
+  expect(ptnData.turns[4]).toEqual(place(3, 2)) // 3. d3
+  expect(ptnData.turns[5]).toEqual(place(2, 2)) // 3. c3
+  expect(ptnData.turns[6]).toEqual(place(3, 4)) // 4. d5
+  expect(ptnData.turns[7]).toEqual(place(2, 4)) // 4. c5
+  expect(ptnData.turns[8]).toEqual(place(3, 1)) // 5. d2
+  expect(ptnData.turns[9]).toEqual(place(4, 3, CapStone)) // 5. Ce4
+  expect(ptnData.turns[10]).toEqual(place(2, 1)) // 6. c2
+  expect(ptnData.turns[11]).toEqual(place(4, 2)) // 6. e3
+  expect(ptnData.turns[12]).toEqual(place(4, 1)) // 7. e2
+  expect(ptnData.turns[13]).toEqual(place(1, 1)) // 7. b2
+  expect(ptnData.turns[14]).toEqual(place(1, 2, CapStone)) // 8. Cb3
+  expect(ptnData.turns[15]).toEqual(move(4, 3, Left, [1])) // 8. 1e4<1
+  expect(ptnData.turns[16]).toEqual(move(3, 2, Left, [1])) // 9. 1d3<1
+  expect(ptnData.turns[17]).toEqual(place(3, 0, StandingStone)) // 9. Sd1
+  expect(ptnData.turns[18]).toEqual(place(0, 2)) // 10. a3'
+  expect(ptnData.turns[19]).toEqual(move(3, 0, Up, [1])) // 10. 1d1+1
+  expect(ptnData.turns[20]).toEqual(place(3, 2, StandingStone)) // 11. Sd3?!
+  expect(ptnData.turns[21]).toEqual(move(3, 3, Down, [1])) // 11. 1d4-*
+})
+
+test(`can parse PTN file where Player 1 finishes`, () => {
+  const ptnFileContents = dedent`
+    [Size "6"]
+
+    1. a6
+  `
+
+  const ptnData = parsePTNData(ptnFileContents)
+
+  expect(ptnData.turns.length).toBe(1)
+})
+
+test(`rejects PTN file with missing moves`, () => {
+  const ptnFileContents = dedent`
+    [Size "6"]
+
+    1. a6 f6
+    2. d3
+    3. a1 b2
+  `
+
+  expect(() => parsePTNData(ptnFileContents)).toThrow("unexpected turn after last turn")
 })
