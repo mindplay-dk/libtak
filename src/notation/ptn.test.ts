@@ -175,9 +175,31 @@ test(`rejects PTN file with missing moves`, () => {
     [Size "6"]
 
     1. a6 f6
-    2. d3
+    2. d3 { since there's no player 2 move, this must be the last turn }
     3. a1 b2
   `
 
   expect(() => parsePTNData(ptnFileContents)).toThrow("unexpected turn after last turn")
+})
+
+test(`rejects PTN file if incorrectly numbered`, () => {
+  const ptnFileContents = dedent`
+    [Size "6"]
+
+    1. a6 f6
+    3. a1 b2 { wrong line number here }
+  `
+
+  expect(() => parsePTNData(ptnFileContents)).toThrow("unexpected round number 3, expected 2")
+})
+
+test(`rejects PTN file with garbage at end of file`, () => {
+  const ptnFileContents = dedent`
+    [Size "6"]
+
+    1. a6
+    whoops
+  `
+
+  expect(() => parsePTNData(ptnFileContents)).toThrow("invalid round line:\nwhoops")
 })
