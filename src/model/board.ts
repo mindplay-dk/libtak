@@ -46,6 +46,9 @@ export type Position = {
   file: FileNum
 }
 
+export const Position = (file: number, rank: number): Position =>
+  ({ file: file as FileNum, rank: rank as RankNum })
+
 export function createBoard(size: number): Board {
   return {
     size,
