@@ -1,4 +1,4 @@
-import { Board } from "./board"
+import { Board, createBoard } from "./board"
 import { PlayerNumber } from "./players"
 
 export type Game = {
@@ -21,7 +21,25 @@ export type Reserve = {
   capstones: number
 }
 
-export function createReserve(boardSize: number): Reserve {
+/**
+ * Creates a new Game with an empty board
+ */
+export function createNewGame(size: number): Game {
+  return {
+    board: createBoard(size),
+    reserve: {
+      1: createNewReserve(size),
+      2: createNewReserve(size),
+    },
+    player: 1 as PlayerNumber,
+    turn: 1,
+  }
+}
+
+/**
+ * Creates the default reserve for a new Game with a given Board size
+ */
+export function createNewReserve(boardSize: number): Reserve {
   switch (boardSize) {
     case 3: return { stones: 10, capstones: 0 }
     case 4: return { stones: 15, capstones: 0 }
