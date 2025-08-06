@@ -19,13 +19,14 @@
 
 * Players begin with all their pieces in **reserve** (not yet on the board).
 
-1.2. First Turn
+1.2. First Turns
 
 * Determine the first player randomly in the first game; alternate thereafter.
-* On the first two turns:
-  * The first player places a Black flat stone.
-  * Black then places a White flat stone.
-* After these two placements, White takes the first regular turn.
+* First placement: Player 1 places a flat stone for Player 2.
+* Second placement: Player 2 places a flat stone for Player 1.
+* Then, regular play begins with Player 1.
+
+Note that walls and capstones may **not** be played in the first turns.
 
 ## 2. Taking Turns
 
