@@ -4,7 +4,7 @@ import { PlayerNumber } from "../model/players";
 import { FlatStone, StoneType } from "../model/stones";
 
 /**
- * Parses a TPS string such as `x5/x5/x5/x5/x5 1 1` and returns a Board instance.
+ * Parses a TPS string such as `x5/x5/x5/x5/x5 1 1` and returns a Game instance.
  */
 export function parseTPS(tps: string): Game {
   /**
@@ -88,4 +88,53 @@ export function parseTPS(tps: string): Game {
     player: +player as PlayerNumber,
     turn: +turn
   }
+}
+
+/**
+ * Takes a Game instance and produces a TPS string.
+ */
+export function createTPS(game: Game): string {
+  const { size, squares } = game.board
+
+  const rankStrings: string[] = []
+
+  for (let rank = size - 1; rank >= 0; rank--) {
+    const squareParts: string[] = [];
+
+    let clearCount = 0;
+
+    for (let file = 0; file < size; file++) {
+      const square = squares[rank as RankNum][file as FileNum];
+
+      if (square.length === 0) {
+        clearCount++;
+      } else {
+        if (clearCount > 0) {
+          squareParts.push(`x${clearCount === 1 ? "" : clearCount}`);
+          clearCount = 0;
+        }
+
+        let stonesString = "";
+        for (const stone of square) {
+          stonesString += `${stone.player}`;
+          if (stone.type === "S") {
+            stonesString += "S";
+          } else if (stone.type === "C") {
+            stonesString += "C";
+          }
+        }
+        squareParts.push(stonesString);
+      }
+    }
+
+    if (clearCount > 0) {
+      squareParts.push(`x${clearCount === 1 ? "" : clearCount}`);
+    }
+    
+    rankStrings.push(squareParts.join(","));
+  }
+
+  const boardDescription = rankStrings.join("/");
+
+  return `${boardDescription} ${game.player} ${game.turn}`;
 }

@@ -1,5 +1,5 @@
 import { test, expect } from "vitest"
-import { parseTPS } from "./tps"
+import { createTPS, parseTPS } from "./tps"
 import { Board, FileNum, RankNum } from "../model/board"
 import { Stone, FlatStone, StandingStone, CapStone } from "../model/stones"
 import { PlayerNumber } from "../model/players"
@@ -144,4 +144,12 @@ test("throws on invalid stack", () => {
 
 test("throws on too many squares in a row", () => {
   expect(() => parseTPS("1,1,1,1,1,1/x5/x5/x5/x5 1 1")).toThrow(`rank "1,1,1,1,1,1" has too many squares, expected 5`)
+})
+
+test("can create TPS string from Game", () => {
+  const tps = "x3,12,2S/x,22S,22C,11,21/121,212,12,1121C,1212S/21S,1,21,211S,12S/x,21S,2,x2 1 26"
+
+  const game = parseTPS(tps)
+
+  expect(createTPS(game)).toBe(tps)
 })
