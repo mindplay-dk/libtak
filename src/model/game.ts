@@ -1,5 +1,5 @@
 import { Board, createBoard } from "./board"
-import { PlayerNumber } from "./players"
+import { Player, Player1, PlayerNumber } from "./players"
 
 export type Game = {
   board: Board
@@ -31,7 +31,7 @@ export function createNewGame(size: number): Game {
       1: createNewReserve(size),
       2: createNewReserve(size),
     },
-    player: 1 as PlayerNumber,
+    player: Player(1),
     turn: 1,
   }
 }

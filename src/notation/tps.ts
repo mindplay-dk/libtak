@@ -1,6 +1,6 @@
 import { Board, FileNum, RankNum, SIZE_MAX, SIZE_MIN, createBoard } from "../model/board";
 import { createNewReserve, Game, Reserve } from "../model/game";
-import { PlayerNumber } from "../model/players";
+import { Player, PlayerNumber } from "../model/players";
 import { CapStone, FlatStone, StandingStone, StoneType } from "../model/stones";
 
 /**
@@ -62,7 +62,7 @@ export function parseTPS(tps: string): Game {
         for (const [player, type] of stones) {
           board.squares[rank as RankNum][file as FileNum].push({
             type: type as StoneType || FlatStone,
-            player: +player as PlayerNumber,
+            player: Player(+player),
           })
         }
 
@@ -85,7 +85,7 @@ export function parseTPS(tps: string): Game {
       1: createReserve(board, 1),
       2: createReserve(board, 2),
     },
-    player: +player as PlayerNumber,
+    player: Player(+player),
     turn: +turn
   }
 }
