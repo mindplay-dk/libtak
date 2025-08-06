@@ -3,7 +3,6 @@ import { parseTPS } from "./tps"
 import { Board, FileNum, RankNum } from "../model/board"
 import { Stone, FlatStone, StandingStone, CapStone } from "../model/stones"
 import { PlayerNumber } from "../model/players"
-import util from 'node:util'
 
 const flat = (player: PlayerNumber): Stone => ({ type: FlatStone, player })
 const standing = (player: PlayerNumber): Stone => ({ type: StandingStone, player })
@@ -11,7 +10,7 @@ const cap = (player: PlayerNumber): Stone => ({ type: CapStone, player })
 const at = (board: Board, rank: number, file: number) => board.squares[rank as RankNum][file as FileNum]
 
 test("parses empty 5x5 board", () => {
-  const board = parseTPS("x5/x5/x5/x5/x5 1 1")
+  const { board } = parseTPS("x5/x5/x5/x5/x5 1 1")
 
   expect(board.size).toBe(5)
 
@@ -33,7 +32,7 @@ test("correctly places stones on the board", () => {
    * [ ] [ ] [ ] [ ] [ ]
    * [ ] [ ] [ ] [ ] [2]
    */
-  const board = parseTPS("x4,2/x5/x5/x5/1,x4 1 1")
+  const { board } = parseTPS("x4,2/x5/x5/x5/1,x4 1 1")
 
   expect(at(board, 0, 0)).toEqual([flat(1)])
   expect(at(board, 4, 4)).toEqual([flat(2)])
@@ -44,7 +43,7 @@ test("rejects incorrect number of stones", () => {
 })
 
 test("parses flat stones and stacks (valid row)", () => {
-  const board = parseTPS("2,12,2S,x2/x5/x5/x5/x5 1 1")
+  const { board } = parseTPS("2,12,2S,x2/x5/x5/x5/x5 1 1")
 
   expect(at(board, 4, 0)).toEqual([flat(2)])
   expect(at(board, 4, 1)).toEqual([flat(1), flat(2)])
@@ -54,14 +53,14 @@ test("parses flat stones and stacks (valid row)", () => {
 })
 
 test("parses standing and cap stones on top", () => {
-  const board = parseTPS("1C,2S,x3/x5/x5/x5/x5 2 3")
+  const { board } = parseTPS("1C,2S,x3/x5/x5/x5/x5 2 3")
 
   expect(at(board, 4, 0)).toEqual([cap(1)])
   expect(at(board, 4, 1)).toEqual([standing(2)])
 })
 
 test("parses multi-digit empty squares", () => {
-  const board = parseTPS("x2,1,x2/x5/x5/x5/x5 1 1")
+  const { board } = parseTPS("x2,1,x2/x5/x5/x5/x5 1 1")
 
   expect(at(board, 4, 0)).toEqual([])
   expect(at(board, 4, 1)).toEqual([])
@@ -72,9 +71,12 @@ test("parses multi-digit empty squares", () => {
 
 test("parses full example from spec", () => {
   const tps = "x3,12,2S/x,22S,22C,11,21/121,212,12,1121C,1212S/21S,1,21,211S,12S/x,21S,2,x2 1 26"
-  const board = parseTPS(tps)
+  const { board, player, turn } = parseTPS(tps)
 
   expect(board.size).toBe(5)
+
+  expect(player).toBe(1)
+  expect(turn).toBe(26)
 
   expect(board.squares).toEqual([
     // x,21S,2,x2
@@ -121,8 +123,8 @@ test("parses full example from spec", () => {
 test("throws on invalid TPS format", () => {
   expect(() => parseTPS("")).toThrow("invalid TPS format")
   expect(() => parseTPS("x5/x5/x5/x5/x5 1")).toThrow("invalid TPS format")
-  expect(() => parseTPS("x5/x5/x5/x5/x5 3 1")).toThrow("invalid turn number: 3 (must be 1 or 2)")
-  expect(() => parseTPS("x5/x5/x5/x5/x5 1 0")).toThrow("invalid move number: 0")
+  expect(() => parseTPS("x5/x5/x5/x5/x5 3 1")).toThrow("invalid player number: 3 (must be 1 or 2)")
+  expect(() => parseTPS("x5/x5/x5/x5/x5 1 0")).toThrow("invalid turn number: 0")
 })
 
 test("throws on invalid board size", () => {

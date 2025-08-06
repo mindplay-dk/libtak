@@ -1,15 +1,16 @@
-import { Board, FileNum, RankNum, SIZE_MAX, SIZE_MIN, Square, createBoard } from "../model/board";
+import { FileNum, RankNum, SIZE_MAX, SIZE_MIN, createBoard } from "../model/board";
+import { createReserve, Game } from "../model/game";
 import { PlayerNumber } from "../model/players";
 import { FlatStone, StoneType } from "../model/stones";
 
 /**
  * Parses a TPS string such as `x5/x5/x5/x5/x5 1 1` and returns a Board instance.
  */
-export function parseTPS(tps: string): Board {
+export function parseTPS(tps: string): Game {
   /**
    * rows separated by '/', then space, then turn and move
    */
-  const TPS_PATTERN = /^(?<boardDescription>[^ ]+)\s+(?<turn>\d+)\s+(?<move>\d+)$/
+  const TPS_PATTERN = /^(?<boardDescription>[^ ]+)\s+(?<player>\d+)\s+(?<turn>\d+)$/
 
   const match = TPS_PATTERN.exec(tps.trim())
 
@@ -17,7 +18,7 @@ export function parseTPS(tps: string): Board {
     throw new Error(`TPS parse error: invalid TPS format`)
   }
 
-  const { boardDescription, turn, move } = match.groups!
+  const { boardDescription, player, turn } = match.groups!
 
   const rankStrings = boardDescription.split("/")
 
@@ -27,14 +28,12 @@ export function parseTPS(tps: string): Board {
     throw new Error(`TPS parse error: board size must be between ${SIZE_MIN} and ${SIZE_MAX}, got ${size}`)
   }
 
-  if (turn !== "1" && turn !== "2") {
-    throw new Error(`TPS parse error: invalid turn number: ${turn} (must be 1 or 2)`)
+  if (player !== "1" && player !== "2") {
+    throw new Error(`TPS parse error: invalid player number: ${player} (must be 1 or 2)`)
   }
 
-  // TODO expose the `turn` and `move` values. (add them to the Game model, I guess?)
-
-  if (!/^[1-9]\d*$/.test(move)) {
-    throw new Error(`TPS parse error: invalid move number: ${move}`)
+  if (!/^[1-9]\d*$/.test(turn)) {
+    throw new Error(`TPS parse error: invalid turn number: ${turn}`)
   }
 
   const board = createBoard(size)
@@ -80,5 +79,13 @@ export function parseTPS(tps: string): Board {
     rank -= 1
   }
 
-  return board;
+  return {
+    board,
+    reserve: {
+      1: createReserve(size),
+      2: createReserve(size),
+    },
+    player: +player as PlayerNumber,
+    turn: +turn
+  }
 }
