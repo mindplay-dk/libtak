@@ -71,12 +71,17 @@ test("parses multi-digit empty squares", () => {
 
 test("parses full example from spec", () => {
   const tps = "x3,12,2S/x,22S,22C,11,21/121,212,12,1121C,1212S/21S,1,21,211S,12S/x,21S,2,x2 1 26"
-  const { board, player, turn } = parseTPS(tps)
+  const { board, player, turn, reserve } = parseTPS(tps)
 
   expect(board.size).toBe(5)
 
   expect(player).toBe(1)
   expect(turn).toBe(26)
+
+  expect(reserve).toEqual({
+    1: { stones: 2, capstones: 0 },
+    2: { stones: 2, capstones: 0 },
+  })
 
   expect(board.squares).toEqual([
     // x,21S,2,x2

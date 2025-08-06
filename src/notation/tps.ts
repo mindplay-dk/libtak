@@ -1,7 +1,7 @@
-import { FileNum, RankNum, SIZE_MAX, SIZE_MIN, createBoard } from "../model/board";
-import { createReserve, Game } from "../model/game";
+import { Board, FileNum, RankNum, SIZE_MAX, SIZE_MIN, createBoard } from "../model/board";
+import { createNewReserve, Game, Reserve } from "../model/game";
 import { PlayerNumber } from "../model/players";
-import { FlatStone, StoneType } from "../model/stones";
+import { CapStone, FlatStone, StandingStone, StoneType } from "../model/stones";
 
 /**
  * Parses a TPS string such as `x5/x5/x5/x5/x5 1 1` and returns a Game instance.
@@ -82,12 +82,38 @@ export function parseTPS(tps: string): Game {
   return {
     board,
     reserve: {
-      1: createReserve(size),
-      2: createReserve(size),
+      1: createReserve(board, 1),
+      2: createReserve(board, 2),
     },
     player: +player as PlayerNumber,
     turn: +turn
   }
+}
+
+/**
+ * TPS strings do not specify the remaining reserve, so we need to calculate that
+ * in order to correctly recreate a playable Game state.
+ */
+export function createReserve(board: Board, player: PlayerNumber): Reserve {
+  const reserve = createNewReserve(board.size)
+
+  for (let rank = 0; rank < board.size; rank++) {
+    for (let file = 0; file < board.size; file++) {
+      const square = board.squares[rank as RankNum][file as FileNum]
+
+      for (const stone of square) {
+        if (stone.player === player) {
+          if (stone.type === CapStone) {
+            reserve.capstones -= 1
+          } else {
+            reserve.stones -= 1
+          }
+        }
+      }
+    }
+  }
+
+  return reserve
 }
 
 /**
@@ -130,7 +156,7 @@ export function createTPS(game: Game): string {
     if (clearCount > 0) {
       squareParts.push(`x${clearCount === 1 ? "" : clearCount}`);
     }
-    
+
     rankStrings.push(squareParts.join(","));
   }
 
