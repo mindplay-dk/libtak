@@ -1,5 +1,5 @@
 import { Board, createBoard } from "./board"
-import { Player, Player1, PlayerNumber } from "./players"
+import { Player, PlayerNumber } from "./players"
 
 export type Game = {
   board: Board

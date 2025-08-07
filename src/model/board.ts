@@ -45,6 +45,14 @@ export type Position = {
 export const Position = (rank: number, file: number): Position => ({ rank, file })
 
 export function createBoard(size: number): Board {
+  if (size < SIZE_MIN) {
+    throw new Error(`Board size ${size} is too small (${SIZE_MIN} is the smallest allowed)`)
+  }
+
+  if (size > SIZE_MAX) {
+    throw new Error(`Board size ${size} is too large (${SIZE_MAX} is the largest allowed)`)
+  }
+
   return {
     size,
     squares: new Array(size) // ranks ("rows", 1, 2, 3, ...)
@@ -53,5 +61,19 @@ export function createBoard(size: number): Board {
         .fill(null)
         .map(() => []) // empty Squares
       )
+  }
+}
+
+type UpdateSquare = (square: Square, rank: number, file: number) => Square
+
+/**
+ * Maps an update function against every Square on the Board and returns an updated Board.
+ */
+export function updateBoard(board: Board, updateSquare: UpdateSquare): Board {
+  return {
+    size: board.size,
+    squares: board.squares.map(((row, rank) =>
+      row.map((square, file) =>
+        updateSquare(square.slice(), rank, file)))),
   }
 }

@@ -5,6 +5,8 @@ export type Stone = {
   type: StoneType
 }
 
+export const Stone = (player: PlayerNumber, type: StoneType = FlatStone) => ({ player, type })
+
 export const FlatStone = 'F'
 export const StandingStone = 'S'
 export const CapStone = 'C'
