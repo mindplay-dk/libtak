@@ -1,4 +1,4 @@
-import { Position } from "../model/board"
+import { Position, SIZE_MAX, SIZE_MIN } from "../model/board"
 import { FlatStone, StoneType } from "../model/stones"
 import { Direction, Turn } from "../model/turns"
 
@@ -9,7 +9,7 @@ import { Direction, Turn } from "../model/turns"
 // - a "turn" of type "move" is e.g. `1d3<1`
 
 interface PTNData {
-  metadata: Record<string, string>
+  metadata: PTNMetadata
   turns: Turn[]
 }
 
@@ -31,6 +31,12 @@ export function parsePTNData(ptnFileContents: string): PTNData {
 
     const metadata = parsePTNMetadataSection(metadataSection)
 
+    const size = + (metadata.get("Size") || '')
+
+    if ((size < SIZE_MIN) || (size > SIZE_MAX)) {
+      throw new Error(`Invalid Size: ${metadata.get("Size")}`)
+    }
+
     const turns: Turn[] = []
 
     const cleanedTurnSection = cleanCommentsFromPTNTurnSection(turnSection)
@@ -47,10 +53,10 @@ export function parsePTNData(ptnFileContents: string): PTNData {
         throw new Error(`PTN parser error: unexpected round number ${round}, expected ${expectedRound}`)
       }
 
-      turns.push(parseTurn(player1turn))
+      turns.push(parseTurn(size, player1turn))
 
       if (player2turn) {
-        turns.push(parseTurn(player2turn))
+        turns.push(parseTurn(size, player2turn))
       } else {
         expectingMore = false
       }
@@ -67,16 +73,21 @@ export function parsePTNData(ptnFileContents: string): PTNData {
   throw new Error(`PTN parser error: unexpected input`)
 }
 
+type PTNMetadata = {
+  values: Record<string, string>,
+  get(name: string): string | undefined,
+}
+
 /**
  * Extracts metedata records from the metadata section of a PTN file
  */
-function parsePTNMetadataSection(metadataSection: string): Record<string, string> {
+function parsePTNMetadataSection(metadataSection: string): PTNMetadata {
   /**
    * Matches a single line of metadata (accepts backslash-escaped double quotes)
    */
   const PTN_METADATA_PATTERN = /^\[(?<name>[A-Za-z0-9_]+)\s+"(?<value>(?:[^"\\]|\\.)*)"\]$/
 
-  const metadata: Record<string, string> = {}
+  const values: Record<string, string> = {}
 
   const lines = metadataSection.split('\n').map(line => line.trim()).filter(line => line.length > 0)
 
@@ -86,10 +97,17 @@ function parsePTNMetadataSection(metadataSection: string): Record<string, string
       throw new Error(`PTN metadata parser error: invalid metadata line: ${line}`)
     }
     const { name, value } = match.groups!
-    metadata[name] = value.replace(/\\(.)/g, '$1')
+    values[name] = value.replace(/\\(.)/g, '$1')
   }
 
-  return metadata
+  return {
+    values,
+    get(name) {
+      const key = Object.keys(values).find(key => name.toLowerCase() === key.toLowerCase())
+
+      return key ? values[key] : undefined
+    }
+  }
 }
 
 /**
@@ -130,7 +148,7 @@ function* extractTurnsFromCleanedPTNTurnSection(cleanedTurnSection: string) {
 /**
  * Parse PTN notation for a single turn.
  */
-export function parseTurn(turn: string): Turn {
+export function parseTurn(size: number, turn: string): Turn {
   /**
    * This pattern matches PTN turn notation.
    * 
@@ -152,16 +170,24 @@ export function parseTurn(turn: string): Turn {
     const {
       count,
       stone,
-      file,
       rank,
+      file,
       direction,
       dropcounts
     } = match.groups!
 
     if (file && rank) {
       const position: Position = {
-        rank: +rank - 1,
+        rank: size - (+rank),
         file: (file.charCodeAt(0) - 'a'.charCodeAt(0)),
+      }
+
+      if (position.rank < 0) {
+        throw new Error(`Unable to parse PTN turn: rank ${rank} is out of bounds on a ${size}x${size} board`)
+      }
+
+      if (position.file > size - 1) {
+        throw new Error(`Unable to parse PTN turn: file ${file} is out of bounds on a ${size}x${size} board`)
       }
 
       if (!count && !direction && !dropcounts) {

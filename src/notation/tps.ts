@@ -38,7 +38,7 @@ export function parseTPS(tps: string): Game {
 
   const board = createBoard(size)
 
-  let rank = size -1
+  let rank = 0
 
   for (const rankString of rankStrings) {
     let file = 0
@@ -76,7 +76,7 @@ export function parseTPS(tps: string): Game {
       throw new Error(`TPS parse error: rank "${rankString}" has ${file} squares, expected ${size}`)
     }
 
-    rank -= 1
+    rank += 1
   }
 
   return {
@@ -124,7 +124,7 @@ export function createTPS(game: Game): string {
 
   const rankStrings: string[] = []
 
-  for (let rank = size - 1; rank >= 0; rank--) {
+  for (let rank = 0; rank < size; rank++) {
     const squareParts: string[] = [];
 
     let clearCount = 0;

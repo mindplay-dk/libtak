@@ -27,16 +27,16 @@ test("correctly places stones on the board", () => {
    * TPS lists ranks from the bottom to the top,
    * so the example TPS below corresponds to:
    * 
-   * [1] [ ] [ ] [ ] [ ]
+   * [ ] [ ] [ ] [ ] [1]
    * [ ] [ ] [ ] [ ] [ ]
    * [ ] [ ] [ ] [ ] [ ]
    * [ ] [ ] [ ] [ ] [ ]
-   * [ ] [ ] [ ] [ ] [2]
+   * [2] [ ] [ ] [ ] [ ]
    */
-  const { board } = parseTPS("x4,2/x5/x5/x5/1,x4 1 1")
+  const { board } = parseTPS("x4,1/x5/x5/x5/2,x4 1 1")
 
-  expect(at(board, 0, 0)).toEqual([flat(1)])
-  expect(at(board, 4, 4)).toEqual([flat(2)])
+  expect(at(board, 0, 4)).toEqual([flat(1)])
+  expect(at(board, 4, 0)).toEqual([flat(2)])
 })
 
 test("rejects incorrect number of stones", () => {
@@ -46,28 +46,28 @@ test("rejects incorrect number of stones", () => {
 test("parses flat stones and stacks (valid row)", () => {
   const { board } = parseTPS("2,12,2S,x2/x5/x5/x5/x5 1 1")
 
-  expect(at(board, 4, 0)).toEqual([flat(2)])
-  expect(at(board, 4, 1)).toEqual([flat(1), flat(2)])
-  expect(at(board, 4, 2)).toEqual([standing(2)])
-  expect(at(board, 4, 3)).toEqual([])
-  expect(at(board, 4, 4)).toEqual([])
+  expect(at(board, 0, 0)).toEqual([flat(2)])
+  expect(at(board, 0, 1)).toEqual([flat(1), flat(2)])
+  expect(at(board, 0, 2)).toEqual([standing(2)])
+  expect(at(board, 0, 3)).toEqual([])
+  expect(at(board, 0, 4)).toEqual([])
 })
 
 test("parses standing and cap stones on top", () => {
   const { board } = parseTPS("1C,2S,x3/x5/x5/x5/x5 2 3")
 
-  expect(at(board, 4, 0)).toEqual([cap(1)])
-  expect(at(board, 4, 1)).toEqual([standing(2)])
+  expect(at(board, 0, 0)).toEqual([cap(1)])
+  expect(at(board, 0, 1)).toEqual([standing(2)])
 })
 
 test("parses multi-digit empty squares", () => {
   const { board } = parseTPS("x2,1,x2/x5/x5/x5/x5 1 1")
 
-  expect(at(board, 4, 0)).toEqual([])
-  expect(at(board, 4, 1)).toEqual([])
-  expect(at(board, 4, 2)).toEqual([flat(1)])
-  expect(at(board, 4, 3)).toEqual([])
-  expect(at(board, 4, 4)).toEqual([])
+  expect(at(board, 0, 0)).toEqual([])
+  expect(at(board, 0, 1)).toEqual([])
+  expect(at(board, 0, 2)).toEqual([flat(1)])
+  expect(at(board, 0, 3)).toEqual([])
+  expect(at(board, 0, 4)).toEqual([])
 })
 
 test("parses full example from spec", () => {
@@ -85,28 +85,11 @@ test("parses full example from spec", () => {
   })
 
   expect(board.squares).toEqual([
-    // x,21S,2,x2
+    // x3,12,2S
     [
-      [],
-      [flat(2), standing(1)],
-      [flat(2)],
-      [], [], // x2
-    ],
-    // 21S,1,21,211S,12S
-    [
-      [flat(2), standing(1)],
-      [flat(1)],
-      [flat(2), flat(1)],
-      [flat(2), flat(1), standing(1)],
-      [flat(1), standing(2)],
-    ],
-    // 121,212,12,1121C,1212S
-    [
-      [flat(1), flat(2), flat(1)],
-      [flat(2), flat(1), flat(2)],
+      [], [], [], // x3
       [flat(1), flat(2)],
-      [flat(1), flat(1), flat(2), cap(1)],
-      [flat(1), flat(2), flat(1), standing(2)],
+      [standing(2)],
     ],
     // x,22S,22C,11,21
     [
@@ -116,11 +99,28 @@ test("parses full example from spec", () => {
       [flat(1), flat(1)],
       [flat(2), flat(1)],
     ],
-    // x3,12,2S
+    // 121,212,12,1121C,1212S
     [
-      [], [], [], // x3
+      [flat(1), flat(2), flat(1)],
+      [flat(2), flat(1), flat(2)],
       [flat(1), flat(2)],
-      [standing(2)],
+      [flat(1), flat(1), flat(2), cap(1)],
+      [flat(1), flat(2), flat(1), standing(2)],
+    ],
+    // 21S,1,21,211S,12S
+    [
+      [flat(2), standing(1)],
+      [flat(1)],
+      [flat(2), flat(1)],
+      [flat(2), flat(1), standing(1)],
+      [flat(1), standing(2)],
+    ],
+    // x,21S,2,x2
+    [
+      [],
+      [flat(2), standing(1)],
+      [flat(2)],
+      [], [], // x2
     ],
   ])
 
