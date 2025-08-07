@@ -1,7 +1,7 @@
-import { Board, FileNum, RankNum, SIZE_MAX, SIZE_MIN, createBoard } from "../model/board";
+import { Board, SIZE_MAX, SIZE_MIN, createBoard } from "../model/board";
 import { createNewReserve, Game, Reserve } from "../model/game";
 import { Player, PlayerNumber } from "../model/players";
-import { CapStone, FlatStone, StandingStone, StoneType } from "../model/stones";
+import { CapStone, FlatStone, StoneType } from "../model/stones";
 
 /**
  * Parses a TPS string such as `x5/x5/x5/x5/x5 1 1` and returns a Game instance.
@@ -60,7 +60,7 @@ export function parseTPS(tps: string): Game {
         const stones = squareString.match(/[12][SC]?/g)!
 
         for (const [player, type] of stones) {
-          board.squares[rank as RankNum][file as FileNum].push({
+          board.squares[rank][file].push({
             type: type as StoneType || FlatStone,
             player: Player(+player),
           })
@@ -99,7 +99,7 @@ export function createReserve(board: Board, player: PlayerNumber): Reserve {
 
   for (let rank = 0; rank < board.size; rank++) {
     for (let file = 0; file < board.size; file++) {
-      const square = board.squares[rank as RankNum][file as FileNum]
+      const square = board.squares[rank][file]
 
       for (const stone of square) {
         if (stone.player === player) {
@@ -130,7 +130,7 @@ export function createTPS(game: Game): string {
     let clearCount = 0;
 
     for (let file = 0; file < size; file++) {
-      const square = squares[rank as RankNum][file as FileNum];
+      const square = squares[rank][file];
 
       if (square.length === 0) {
         clearCount++;

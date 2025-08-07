@@ -1,4 +1,5 @@
 import { test, expect } from "vitest"
+
 import { createBoard } from "./board"
 
 test(`can create empty Board`, () => {

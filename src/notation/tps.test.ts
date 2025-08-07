@@ -1,13 +1,14 @@
 import { test, expect } from "vitest"
+
 import { createTPS, parseTPS } from "./tps"
-import { Board, FileNum, RankNum } from "../model/board"
+import { Board } from "../model/board"
 import { Stone, FlatStone, StandingStone, CapStone } from "../model/stones"
 import { PlayerNumber } from "../model/players"
 
 const flat = (player: PlayerNumber): Stone => ({ type: FlatStone, player })
 const standing = (player: PlayerNumber): Stone => ({ type: StandingStone, player })
 const cap = (player: PlayerNumber): Stone => ({ type: CapStone, player })
-const at = (board: Board, rank: number, file: number) => board.squares[rank as RankNum][file as FileNum]
+const at = (board: Board, rank: number, file: number) => board.squares[rank][file]
 
 test("parses empty 5x5 board", () => {
   const { board } = parseTPS("x5/x5/x5/x5/x5 1 1")

@@ -1,9 +1,9 @@
-import { test, expect, assert } from "vitest"
-import { parsePTNData, parseTurn } from "./ptn"
-import { Direction, Down, Left, Move, Place, Right, Turn, Up } from "../model/turns"
-import { RankNum, Position, FileNum } from "../model/board"
-import { CapStone, FlatStone, StandingStone, Stone, StoneType } from "../model/stones"
+import { test, expect } from "vitest"
 import dedent from "dedent"
+
+import { parsePTNData, parseTurn } from "./ptn"
+import { Down, Left, Move, Place, Right, Up } from "../model/turns"
+import { CapStone, StandingStone } from "../model/stones"
 
 test(`can parse PTN place notations`, () => {
   // Place flat stones at a1:

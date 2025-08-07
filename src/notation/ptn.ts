@@ -1,4 +1,4 @@
-import { FileNum, Position, RankNum } from "../model/board"
+import { Position } from "../model/board"
 import { FlatStone, StoneType } from "../model/stones"
 import { Direction, Turn } from "../model/turns"
 
@@ -160,8 +160,8 @@ export function parseTurn(turn: string): Turn {
 
     if (file && rank) {
       const position: Position = {
-        rank: +rank - 1 as RankNum,
-        file: (file.charCodeAt(0) - 'a'.charCodeAt(0)) as FileNum,
+        rank: +rank - 1,
+        file: (file.charCodeAt(0) - 'a'.charCodeAt(0)),
       }
 
       if (!count && !direction && !dropcounts) {

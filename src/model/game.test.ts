@@ -1,4 +1,5 @@
 import { test, expect } from "vitest"
+
 import { createNewGame } from "./game"
 
 test("can create empty Game", () => {

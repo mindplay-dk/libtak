@@ -26,37 +26,30 @@ export const SIZE_MAX = 8
 export type Board = {
   /** The size is also the carry limit */
   size: number
-  squares: { readonly [R in RankNum]: { readonly [F in FileNum]: Square }}
+  /** Squares addressed as squares[rank][file] */
+  squares: readonly Square[][]
 }
 
-export const Board = (size: number, squares: Stone[][][]): Board => ({ size, squares })
+export const Board = (size: number, squares: Square[][]): Board => ({ size, squares })
 
 /** list of stones from bottom (index 0) to top */
 export type Square = Stone[]
 
-declare const $RankNum: unique symbol
-declare const $FileNum: unique symbol
-declare const $dimension: unique symbol
-
-export type RankNum = number & { [$dimension]: typeof $RankNum }
-export type FileNum = number & { [$dimension]: typeof $FileNum }
-
 export type Position = {
   /** Ranks (rows) are numbered up the side of the board (so 0 is the first row "1" at the bottom) */
-  rank: RankNum
+  rank: number
   /** Files (columns) are lettered across the bottom of the board (so 0 is the first column "A" on the left) */
-  file: FileNum
+  file: number
 }
 
-export const Position = (rank: number, file: number): Position =>
-  ({ rank: rank as RankNum, file: file as FileNum })
+export const Position = (rank: number, file: number): Position => ({ rank, file })
 
 export function createBoard(size: number): Board {
   return {
     size,
-    squares: new Array(size) // files ("columns", A, B, C, ...)
+    squares: new Array(size) // ranks ("rows", 1, 2, 3, ...)
       .fill(null)
-      .map(() => new Array(size) // ranks ("rows", 1, 2, 3, ...)
+      .map(() => new Array(size) // files ("columns", A, B, C, ...)
         .fill(null)
         .map(() => []) // empty Squares
       )
