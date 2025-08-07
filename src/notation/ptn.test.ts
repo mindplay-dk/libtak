@@ -13,10 +13,10 @@ test(`can parse PTN place notations`, () => {
   expect(parseTurn('Fh8')).toEqual<Place>(Place(7, 7))
 
   // Place capstone at b4: 
-  expect(parseTurn('Cb4')).toEqual<Place>(Place(1, 3, CapStone))
+  expect(parseTurn('Cb4')).toEqual<Place>(Place(3, 1, CapStone))
 
   // Place standing stone at d3:
-  expect(parseTurn('Sd3')).toEqual<Place>(Place(3, 2, StandingStone))
+  expect(parseTurn('Sd3')).toEqual<Place>(Place(2, 3, StandingStone))
 })
 
 test(`can parse PTN move notations`, () => {
@@ -33,7 +33,7 @@ test(`can parse PTN move notations`, () => {
   expect(parseTurn('2d4-2')).toEqual<Move>(Move(3, 3, Down, [2]))
 
   // Move 5 stones from e4 toward c4, dropping 2 and then 3 as you move:
-  expect(parseTurn('5e4<23')).toEqual<Move>(Move(4, 3, Left, [2, 3]))
+  expect(parseTurn('5e4<23')).toEqual<Move>(Move(3, 4, Left, [2, 3]))
 
   // Move a single stone from a1 to b1 (default count 1, default dropcounts [1]):
   expect(parseTurn('a1>')).toEqual<Move>(Move(0, 0, Right, [1]))
@@ -48,7 +48,7 @@ test(`can parse PTN move notations`, () => {
   expect(parseTurn('2d4-2')).toEqual<Move>(Move(3, 3, Down, [2]))
 
   // Move 5 stones from e4 left toward c4, dropping 2 on d4 and 3 on c4:
-  expect(parseTurn('5e4<23')).toEqual<Move>(Move(4, 3, Left, [2, 3]))
+  expect(parseTurn('5e4<23')).toEqual<Move>(Move(3, 4, Left, [2, 3]))
 })
 
 test('rejects invalid PTN notations', () => {
@@ -125,27 +125,27 @@ test(`can parse PTN file`, () => {
   
   expect(ptnData.turns.length).toBe(22)
 
-  expect(ptnData.turns[0]).toEqual(Place(0, 5)) // 1. a6
+  expect(ptnData.turns[0]).toEqual(Place(5, 0)) // 1. a6
   expect(ptnData.turns[1]).toEqual(Place(5, 5)) // 1. f6
   expect(ptnData.turns[2]).toEqual(Place(3, 3)) // 2. d4
-  expect(ptnData.turns[3]).toEqual(Place(2, 3)) // 2. c4
-  expect(ptnData.turns[4]).toEqual(Place(3, 2)) // 3. d3
+  expect(ptnData.turns[3]).toEqual(Place(3, 2)) // 2. c4
+  expect(ptnData.turns[4]).toEqual(Place(2, 3)) // 3. d3
   expect(ptnData.turns[5]).toEqual(Place(2, 2)) // 3. c3
-  expect(ptnData.turns[6]).toEqual(Place(3, 4)) // 4. d5
-  expect(ptnData.turns[7]).toEqual(Place(2, 4)) // 4. c5
-  expect(ptnData.turns[8]).toEqual(Place(3, 1)) // 5. d2
-  expect(ptnData.turns[9]).toEqual(Place(4, 3, CapStone)) // 5. Ce4
-  expect(ptnData.turns[10]).toEqual(Place(2, 1)) // 6. c2
-  expect(ptnData.turns[11]).toEqual(Place(4, 2)) // 6. e3
-  expect(ptnData.turns[12]).toEqual(Place(4, 1)) // 7. e2
+  expect(ptnData.turns[6]).toEqual(Place(4, 3)) // 4. d5
+  expect(ptnData.turns[7]).toEqual(Place(4, 2)) // 4. c5
+  expect(ptnData.turns[8]).toEqual(Place(1, 3)) // 5. d2
+  expect(ptnData.turns[9]).toEqual(Place(3, 4, CapStone)) // 5. Ce4
+  expect(ptnData.turns[10]).toEqual(Place(1, 2)) // 6. c2
+  expect(ptnData.turns[11]).toEqual(Place(2, 4)) // 6. e3
+  expect(ptnData.turns[12]).toEqual(Place(1, 4)) // 7. e2
   expect(ptnData.turns[13]).toEqual(Place(1, 1)) // 7. b2
-  expect(ptnData.turns[14]).toEqual(Place(1, 2, CapStone)) // 8. Cb3
-  expect(ptnData.turns[15]).toEqual(Move(4, 3, Left, [1])) // 8. 1e4<1
-  expect(ptnData.turns[16]).toEqual(Move(3, 2, Left, [1])) // 9. 1d3<1
-  expect(ptnData.turns[17]).toEqual(Place(3, 0, StandingStone)) // 9. Sd1
-  expect(ptnData.turns[18]).toEqual(Place(0, 2)) // 10. a3'
-  expect(ptnData.turns[19]).toEqual(Move(3, 0, Up, [1])) // 10. 1d1+1
-  expect(ptnData.turns[20]).toEqual(Place(3, 2, StandingStone)) // 11. Sd3?!
+  expect(ptnData.turns[14]).toEqual(Place(2, 1, CapStone)) // 8. Cb3
+  expect(ptnData.turns[15]).toEqual(Move(3, 4, Left, [1])) // 8. 1e4<1
+  expect(ptnData.turns[16]).toEqual(Move(2, 3, Left, [1])) // 9. 1d3<1
+  expect(ptnData.turns[17]).toEqual(Place(0, 3, StandingStone)) // 9. Sd1
+  expect(ptnData.turns[18]).toEqual(Place(2, 0)) // 10. a3'
+  expect(ptnData.turns[19]).toEqual(Move(0, 3, Up, [1])) // 10. 1d1+1
+  expect(ptnData.turns[20]).toEqual(Place(2, 3, StandingStone)) // 11. Sd3?!
   expect(ptnData.turns[21]).toEqual(Move(3, 3, Down, [1])) // 11. 1d4-*
 })
 

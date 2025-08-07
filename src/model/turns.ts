@@ -9,8 +9,8 @@ export type Place = {
   position: Position
 }
 
-export const Place = (file: number, rank: number, stone: StoneType = FlatStone): Place =>
-  ({ type: 'place', stone, position: Position(file, rank) })
+export const Place = (rank: number, file: number, stone: StoneType = FlatStone): Place =>
+  ({ type: 'place', stone, position: Position(rank, file) })
 
 export type Move = {
   type: 'move'
@@ -19,8 +19,8 @@ export type Move = {
   dropcounts: number[]
 }
 
-export const Move = (file: number, rank: number, direction: Direction, dropcounts: number[]): Move =>
-  ({ type: 'move', fromPosition: Position(file, rank), direction, dropcounts })
+export const Move = (rank: number, file: number, direction: Direction, dropcounts: number[]): Move =>
+  ({ type: 'move', fromPosition: Position(rank, file), direction, dropcounts })
 
 export const Up = '+'
 export const Down = '-'

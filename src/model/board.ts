@@ -29,6 +29,8 @@ export type Board = {
   squares: { readonly [R in RankNum]: { readonly [F in FileNum]: Square }}
 }
 
+export const Board = (size: number, squares: Stone[][][]): Board => ({ size, squares })
+
 /** list of stones from bottom (index 0) to top */
 export type Square = Stone[]
 
@@ -46,8 +48,8 @@ export type Position = {
   file: FileNum
 }
 
-export const Position = (file: number, rank: number): Position =>
-  ({ file: file as FileNum, rank: rank as RankNum })
+export const Position = (rank: number, file: number): Position =>
+  ({ rank: rank as RankNum, file: file as FileNum })
 
 export function createBoard(size: number): Board {
   return {

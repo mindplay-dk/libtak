@@ -14,9 +14,9 @@ test("parses empty 5x5 board", () => {
 
   expect(board.size).toBe(5)
 
-  for (let f = 0; f < 5; f++) {
-    for (let r = 0; r < 5; r++) {
-      expect(at(board, f, r)).toEqual([])
+  for (let rank = 0; rank < 5; rank++) {
+    for (let file = 0; file < 5; file++) {
+      expect(at(board, rank, file)).toEqual([])
     }
   }
 })
