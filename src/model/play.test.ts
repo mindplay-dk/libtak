@@ -79,22 +79,20 @@ describe("Rule 1.2: First two turns", () => {
       "Turn 2 must place a flat stone"
     )
   })
-})
 
-describe("Rule 2.1: Placing Stones", () => {
-  test("can place stones", () => {
+  test("Stone colors reversed during the opening turn", () => {
     let game = createNewGame(3)
 
-    game = play(game, Place(0, 0)) // P1
+    game = play(game, Place(0, 0)) // P1 opening for P2
 
     expect(game.player).toBe(2)
 
     expect(game.reserve).toEqual({
-      1: { stones: 9, capstones: 0 },
-      2: { stones: 10, capstones: 0 },
+      1: { stones: 10, capstones: 0 },
+      2: { stones: 9, capstones: 0 },
     })
 
-    game = play(game, Place(1, 1)) // P2
+    game = play(game, Place(0, 1)) // P2 opening for P1
 
     expect(game.player).toBe(1)
 
@@ -103,9 +101,23 @@ describe("Rule 2.1: Placing Stones", () => {
       2: { stones: 9, capstones: 0 },
     })
 
+    game = play(game, Place(1, 0)) // P1
+
+    expect(game.reserve).toEqual({
+      1: { stones: 8, capstones: 0 },
+      2: { stones: 9, capstones: 0 },
+    })
+
+    game = play(game, Place(1, 1)) // P2
+
+    expect(game.reserve).toEqual({
+      1: { stones: 8, capstones: 0 },
+      2: { stones: 8, capstones: 0 },
+    })
+
     expect(game.board.squares).toEqual([
-      [[Stone(1)], [        ], [        ]],
-      [[        ], [Stone(2)], [        ]],
+      [[Stone(2)], [Stone(1)], [        ]],
+      [[Stone(1)], [Stone(2)], [        ]],
       [[        ], [        ], [        ]],
     ])
   })
@@ -115,8 +127,8 @@ describe("Rule 2.2: Moving Stones", () => {
   test("can move stones up", () => {
     let game = createNewGame(3)
     
-    game = play(game, Place(1, 1)) // P1
-    game = play(game, Place(1, 2)) // P2
+    game = play(game, Place(1, 2)) // P1
+    game = play(game, Place(1, 1)) // P2
     game = play(game, Move(1, 1, Up, [1])) // P1
     
     expect(game.board.squares).toEqual([
@@ -129,8 +141,8 @@ describe("Rule 2.2: Moving Stones", () => {
   test("can move stones down", () => {
     let game = createNewGame(3)
     
-    game = play(game, Place(1, 1)) // P1
-    game = play(game, Place(1, 2)) // P2
+    game = play(game, Place(1, 2)) // P1
+    game = play(game, Place(1, 1)) // P2
     game = play(game, Move(1, 1, Down, [1])) // P1
     
     expect(game.board.squares).toEqual([
@@ -143,8 +155,8 @@ describe("Rule 2.2: Moving Stones", () => {
   test("can move stones left", () => {
     let game = createNewGame(3)
     
-    game = play(game, Place(1, 1)) // P1
-    game = play(game, Place(1, 2)) // P2
+    game = play(game, Place(1, 2)) // P1
+    game = play(game, Place(1, 1)) // P2
     game = play(game, Move(1, 1, Left, [1])) // P1
     
     expect(game.board.squares).toEqual([
@@ -157,8 +169,8 @@ describe("Rule 2.2: Moving Stones", () => {
   test("can move stones right", () => {
     let game = createNewGame(3)
     
-    game = play(game, Place(1, 1)) // P1
-    game = play(game, Place(1, 2)) // P2
+    game = play(game, Place(1, 2)) // P1
+    game = play(game, Place(1, 1)) // P2
     game = play(game, Move(1, 1, Right, [1])) // P1
     
     expect(game.board.squares).toEqual([
@@ -171,8 +183,8 @@ describe("Rule 2.2: Moving Stones", () => {
   test("cannot move out of bounds", () => {
     let game = createNewGame(3)
     
-    game = play(game, Place(0, 0)) // P1
-    game = play(game, Place(0, 1)) // P2
+    game = play(game, Place(0, 1)) // P1
+    game = play(game, Place(0, 0)) // P2
     
     expect(() => play(game, Move(0, 0, Up, [1]))).toThrow(
       "Position out of bounds: rank -1, file 0 on a 3x3 board"
@@ -182,8 +194,8 @@ describe("Rule 2.2: Moving Stones", () => {
   test("Rule 2.2.1: cannot move opponent's stones", () => {
     let game = createNewGame(3)
     
-    game = play(game, Place(0, 0, FlatStone)) // P1 turn 1
-    game = play(game, Place(1, 1, FlatStone)) // P2 turn 2
+    game = play(game, Place(1, 1, FlatStone)) // P1 turn 1
+    game = play(game, Place(0, 0, FlatStone)) // P2 turn 2
     
     // P1 tries to move P2's stone
     expect(() => play(game, Move(1, 1, Right, [1]))).toThrow(
@@ -194,8 +206,8 @@ describe("Rule 2.2: Moving Stones", () => {
   test("Rule 2.2.1: can move multiple stones", () => {
     let game = createNewGame(3)
     
-    game = play(game, Place(0, 0)) // P1
-    game = play(game, Place(0, 1)) // P2
+    game = play(game, Place(0, 1)) // P1
+    game = play(game, Place(0, 0)) // P2
     game = play(game, Place(1, 0)) // P1
     game = play(game, Place(1, 1)) // P2
     game = play(game, Move(1, 0, Up, [1])) // P1
@@ -232,8 +244,8 @@ describe("Rule 2.2: Moving Stones", () => {
   test("Rule 2.2.1: cannot carry more stones than are in a stack", () => {
     let game = createNewGame(3)
     
-    game = play(game, Place(0, 0)) // P1
-    game = play(game, Place(0, 1)) // P2
+    game = play(game, Place(0, 1)) // P1
+    game = play(game, Place(0, 0)) // P2
 
     expect(() => play(game, Move(0, 0, Right, [1])), "pick up maximum").not.toThrow()
     
@@ -266,8 +278,8 @@ describe("Rule 2.2: Moving Stones", () => {
   test("Rule 2.2.3: can flatten standing stone", () => {
     let game = createNewGame(5)
     
-    game = play(game, Place(0, 0)) // P1
-    game = play(game, Place(0, 1)) // P2
+    game = play(game, Place(0, 1)) // P1
+    game = play(game, Place(0, 0)) // P2
     game = play(game, Place(1, 0, CapStone)) // P1
     game = play(game, Place(1, 1, StandingStone)) // P2
     game = play(game, Move(1, 0, Right, [1])) // P1 flattens P2

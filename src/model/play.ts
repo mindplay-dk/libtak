@@ -8,7 +8,9 @@ import { Turn, Place, Move, Direction, Up, Down, Left, Right } from "./turns";
  * Given a Game state and a Turn, produces the resulting Game state.
  */
 export function play(game: Game, turn: Turn): Game {
-  if (game.turn <= 2) {
+  const isOpening = game.turn <= 2
+
+  if (isOpening) {
     if (turn.type === "move" || turn.stone !== FlatStone) {
       throw new Error(`Turn ${game.turn} must place a flat stone`);
     }
@@ -27,21 +29,26 @@ export function play(game: Game, turn: Turn): Game {
       throw new Error(`Player ${game.player} does not have ${stoneType} in reserve`)
     }
 
+    /**
+     * NOTE: the player "color" is reversed during the opening turn
+     */
+    const playerColor = isOpening ? opponent(game.player) : game.player
+
     return {
       player: opponent(game.player),
       turn: game.turn + 1,
       board: updateBoard(game.board, (square, rank, file) =>
         (turn.position.rank === rank) && (turn.position.file === file)
-          ? [...square, Stone(game.player, turn.stone)]
+          ? [...square, Stone(playerColor, turn.stone)]
           : square),
       reserve: {
         1: {
-          stones: game.reserve[1].stones - (game.player === 1 && turn.stone !== CapStone ? 1 : 0),
-          capstones: game.reserve[1].capstones - (game.player === 1 && turn.stone === CapStone ? 1 : 0)
+          stones: game.reserve[1].stones - (playerColor === 1 && turn.stone !== CapStone ? 1 : 0),
+          capstones: game.reserve[1].capstones - (playerColor === 1 && turn.stone === CapStone ? 1 : 0)
         },
         2: {
-          stones: game.reserve[2].stones - (game.player === 2 && turn.stone !== CapStone ? 1 : 0),
-          capstones: game.reserve[2].capstones - (game.player === 2 && turn.stone === CapStone ? 1 : 0)
+          stones: game.reserve[2].stones - (playerColor === 2 && turn.stone !== CapStone ? 1 : 0),
+          capstones: game.reserve[2].capstones - (playerColor === 2 && turn.stone === CapStone ? 1 : 0)
         }
       },
     }
