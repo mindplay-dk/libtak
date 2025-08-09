@@ -6,10 +6,13 @@ import { Down, Left, Move, Place, Right, Up } from "../model/turns"
 import { CapStone, StandingStone } from "../model/stones"
 
 test(`can parse PTN place notations`, () => {
-  // Place flat stones at a1:
+  // Place flat stones in all corners:
+  expect(parseTurn(5, 'a5')).toEqual<Place>(Place(0, 0))
+  expect(parseTurn(5, 'e5')).toEqual<Place>(Place(0, 4))
   expect(parseTurn(5, 'a1')).toEqual<Place>(Place(4, 0))
+  expect(parseTurn(5, 'e1')).toEqual<Place>(Place(4, 4))
 
-  // Place flat stones at a1:
+  // Place flat stones at h8:
   expect(parseTurn(8, 'Fh8')).toEqual<Place>(Place(0, 7))
 
   // Place capstone at b4: 
@@ -192,13 +195,27 @@ test(`rejects PTN file if incorrectly numbered`, () => {
   expect(() => parsePTNData(ptnFileContents)).toThrow("unexpected round number 3, expected 2")
 })
 
-test(`rejects PTN file with garbage at end of file`, () => {
+test(`ignores extra content at the beginning/end of a file`, () => {
   const ptnFileContents = dedent`
+    Hello world
     [Size "6"]
 
     1. a6
     whoops
   `
 
-  expect(() => parsePTNData(ptnFileContents)).toThrow("invalid round line:\nwhoops")
+  const { metadata, turns } = parsePTNData(ptnFileContents)
+
+  expect(metadata.get("Size")).toBe("6")
+  
+  expect(turns).toEqual([
+    {
+      "position": {
+        "file": 0,
+        "rank": 0,
+      },
+      "stone": "F",
+      "type": "place",
+    },
+  ])
 })

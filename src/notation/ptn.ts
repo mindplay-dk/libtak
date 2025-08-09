@@ -1,4 +1,6 @@
 import { Position, SIZE_MAX, SIZE_MIN } from "../model/board"
+import { createNewGame, Game } from "../model/game"
+import { play } from "../model/play"
 import { FlatStone, StoneType } from "../model/stones"
 import { Direction, Turn } from "../model/turns"
 
@@ -13,6 +15,26 @@ interface PTNData {
   turns: Turn[]
 }
 
+type PTNMetadata = {
+  values: Record<string, string>,
+  get(name: string): string | undefined,
+}
+
+/**
+ * Parse a PTN file and recreate the resulting Game state.
+ */
+export function parsePTN(ptnFileContents: string): Game {
+  const { metadata, turns } = parsePTNData(ptnFileContents)
+
+  let game = createNewGame(+metadata.get("Size")!)
+
+  for (const turn of turns) {
+    game = play(game, turn)
+  }
+
+  return game
+}
+
 /**
  * Parse PTN file contents.
  * 
@@ -22,7 +44,7 @@ export function parsePTNData(ptnFileContents: string): PTNData {
   /**
    * Matches the two sections in a PTN file (metadata and turns)
    */
-  const PTN_SECTIONS_PATTERN = /^(?<metadataSection>[\s\S]*?)(?:^1\..*)?(?<turnSection>^[1][\s\S]*)/mg
+  const PTN_SECTIONS_PATTERN = /(?<metadataSection>(?:\[[^\]]+\]\s*)+)\s*(?<turnSection>(?:\d+\.\s+.*\n?)*)\s*(?:\s*)/gm
 
   const match = PTN_SECTIONS_PATTERN.exec(ptnFileContents)
 
@@ -71,11 +93,6 @@ export function parsePTNData(ptnFileContents: string): PTNData {
   }
 
   throw new Error(`PTN parser error: unexpected input`)
-}
-
-type PTNMetadata = {
-  values: Record<string, string>,
-  get(name: string): string | undefined,
 }
 
 /**
@@ -176,7 +193,7 @@ export function parseTurn(size: number, turn: string): Turn {
       dropcounts
     } = match.groups!
 
-    if (file && rank) {
+    if (rank && file) {
       const position: Position = {
         rank: size - (+rank),
         file: (file.charCodeAt(0) - 'a'.charCodeAt(0)),
