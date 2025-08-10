@@ -44,6 +44,9 @@ export type Position = {
 
 export const Position = (rank: number, file: number): Position => ({ rank, file })
 
+/**
+ * Creates an empty Board.
+ */
 export function createBoard(size: number): Board {
   if (size < SIZE_MIN) {
     throw new Error(`Board size ${size} is too small (${SIZE_MIN} is the smallest allowed)`)
@@ -64,7 +67,7 @@ export function createBoard(size: number): Board {
   }
 }
 
-type UpdateSquare = (square: Square, rank: number, file: number) => Square
+export type UpdateSquare = (square: Square, rank: number, file: number) => Square
 
 /**
  * Maps an update function against every Square on the Board and returns an updated Board.

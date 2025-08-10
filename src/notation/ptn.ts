@@ -1,5 +1,5 @@
 import { Position, SIZE_MAX, SIZE_MIN } from "../model/board"
-import { createNewGame, Game } from "../model/game"
+import { createGame, Game } from "../model/game"
 import { play } from "../model/play"
 import { FlatStone, StoneType } from "../model/stones"
 import { Direction, Turn } from "../model/turns"
@@ -26,7 +26,7 @@ interface PTNMetadata {
 export function parsePTN(ptnFileContents: string): Game {
   const { metadata, turns } = parsePTNData(ptnFileContents)
 
-  let game = createNewGame(+metadata.get("Size")!)
+  let game = createGame(+metadata.get("Size")!)
 
   for (const turn of turns) {
     game = play(game, turn)

@@ -22,14 +22,14 @@ export type Reserve = {
 }
 
 /**
- * Creates a new Game with an empty board
+ * Creates a new Game with an empty Board
  */
-export function createNewGame(size: number): Game {
+export function createGame(size: number): Game {
   return {
     board: createBoard(size),
     reserve: {
-      1: createNewReserve(size),
-      2: createNewReserve(size),
+      1: createReserve(size),
+      2: createReserve(size),
     },
     player: Player(1),
     turn: 1,
@@ -39,7 +39,7 @@ export function createNewGame(size: number): Game {
 /**
  * Creates the default reserve for a new Game with a given Board size
  */
-export function createNewReserve(boardSize: number): Reserve {
+export function createReserve(boardSize: number): Reserve {
   switch (boardSize) {
     case 3: return { stones: 10, capstones: 0 }
     case 4: return { stones: 15, capstones: 0 }

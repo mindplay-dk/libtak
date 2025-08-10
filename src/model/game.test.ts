@@ -1,9 +1,9 @@
 import { test, expect } from "vitest"
 
-import { createNewGame } from "./game"
+import { createGame } from "./game"
 
 test("can create empty Game", () => {
-  const game = createNewGame(5)
+  const game = createGame(5)
 
   expect(game.board.size).toBe(5)
   expect(game.player).toBe(1)

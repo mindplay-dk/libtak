@@ -1,5 +1,5 @@
 import { Board, SIZE_MAX, SIZE_MIN, createBoard } from "../model/board";
-import { createNewReserve, Game, Reserve } from "../model/game";
+import { createReserve, Game, Reserve } from "../model/game";
 import { Player, PlayerNumber } from "../model/players";
 import { CapStone, FlatStone, StoneType } from "../model/stones";
 
@@ -82,8 +82,8 @@ export function parseTPS(tps: string): Game {
   return {
     board,
     reserve: {
-      1: createReserve(board, 1),
-      2: createReserve(board, 2),
+      1: recreateReserve(board, 1),
+      2: recreateReserve(board, 2),
     },
     player: Player(+player),
     turn: +turn
@@ -94,8 +94,8 @@ export function parseTPS(tps: string): Game {
  * TPS strings do not specify the remaining reserve, so we need to calculate that
  * in order to correctly recreate a playable Game state.
  */
-export function createReserve(board: Board, player: PlayerNumber): Reserve {
-  const reserve = createNewReserve(board.size)
+function recreateReserve(board: Board, player: PlayerNumber): Reserve {
+  const reserve = createReserve(board.size)
 
   for (let rank = 0; rank < board.size; rank++) {
     for (let file = 0; file < board.size; file++) {

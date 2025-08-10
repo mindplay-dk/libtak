@@ -1,6 +1,6 @@
 import { test, expect, describe } from "vitest"
 import { verifyPlay, play } from "./play"
-import { Game, Reserve, createNewGame, createNewReserve } from "./game"
+import { Game, Reserve, createGame, createReserve } from "./game"
 import { Board, Position, createBoard } from "./board"
 import { PlayerNumber, Player, Player1, Player2 } from "./players"
 import { Stone, StoneType, FlatStone, StandingStone, CapStone } from "./stones"
@@ -8,7 +8,7 @@ import { Turn, Place, Move, Direction, Up, Down, Left, Right } from "./turns"
 
 describe("Rule 1.1: Board Setup", () => {
   test("Rule 1.1: cannot place out of bounds", () => {
-    let game = createNewGame(3)
+    let game = createGame(3)
     
     expect(() => play(game, Place(3, 0))).toThrow(
       "Position out of bounds: rank 3, file 0 on a 3x3 board"
@@ -24,7 +24,7 @@ describe("Rule 1.1: Board Setup", () => {
   })
 
   test("Rule 1.1: cannot place stone when no stones in reserve", () => {
-    let game = createNewGame(3)
+    let game = createGame(3)
 
     game = play(game, Place(0, 0)) // P1
     game = play(game, Place(0, 1)) // P2
@@ -42,7 +42,7 @@ describe("Rule 1.1: Board Setup", () => {
   })
 
   test("Rule 1.1: cannot place capstone when no capstones in reserve", () => {
-    let game = createNewGame(3) // there are no capstones in a 3x3 game
+    let game = createGame(3) // there are no capstones in a 3x3 game
 
     game = play(game, Place(0, 0))
     game = play(game, Place(0, 1))
@@ -55,7 +55,7 @@ describe("Rule 1.1: Board Setup", () => {
 
 describe("Rule 1.2: First two turns", () => {
   test("turn 1 must place flat stone", () => {
-    let game = createNewGame(5)
+    let game = createGame(5)
     
     expect(() => play(game, Place(0, 0, StandingStone))).toThrow(
       "Turn 1 must place a flat stone"
@@ -67,7 +67,7 @@ describe("Rule 1.2: First two turns", () => {
   })
 
   test("turn 2 must place flat stone", () => {
-    let game = createNewGame(5)
+    let game = createGame(5)
 
     game = play(game, Place(0, 0, FlatStone)) // P1
     
@@ -81,7 +81,7 @@ describe("Rule 1.2: First two turns", () => {
   })
 
   test("Stone colors reversed during the opening turn", () => {
-    let game = createNewGame(3)
+    let game = createGame(3)
 
     game = play(game, Place(0, 0)) // P1 opening for P2
 
@@ -125,7 +125,7 @@ describe("Rule 1.2: First two turns", () => {
 
 describe("Rule 2.2: Moving Stones", () => {
   test("can move stones up", () => {
-    let game = createNewGame(3)
+    let game = createGame(3)
     
     game = play(game, Place(1, 2)) // P1
     game = play(game, Place(1, 1)) // P2
@@ -139,7 +139,7 @@ describe("Rule 2.2: Moving Stones", () => {
   })
 
   test("can move stones down", () => {
-    let game = createNewGame(3)
+    let game = createGame(3)
     
     game = play(game, Place(1, 2)) // P1
     game = play(game, Place(1, 1)) // P2
@@ -153,7 +153,7 @@ describe("Rule 2.2: Moving Stones", () => {
   })
 
   test("can move stones left", () => {
-    let game = createNewGame(3)
+    let game = createGame(3)
     
     game = play(game, Place(1, 2)) // P1
     game = play(game, Place(1, 1)) // P2
@@ -167,7 +167,7 @@ describe("Rule 2.2: Moving Stones", () => {
   })
 
   test("can move stones right", () => {
-    let game = createNewGame(3)
+    let game = createGame(3)
     
     game = play(game, Place(1, 2)) // P1
     game = play(game, Place(1, 1)) // P2
@@ -181,7 +181,7 @@ describe("Rule 2.2: Moving Stones", () => {
   })
 
   test("cannot move out of bounds", () => {
-    let game = createNewGame(3)
+    let game = createGame(3)
     
     game = play(game, Place(0, 1)) // P1
     game = play(game, Place(0, 0)) // P2
@@ -192,7 +192,7 @@ describe("Rule 2.2: Moving Stones", () => {
   })
 
   test("Rule 2.2.1: cannot move opponent's stones", () => {
-    let game = createNewGame(3)
+    let game = createGame(3)
     
     game = play(game, Place(1, 1, FlatStone)) // P1 turn 1
     game = play(game, Place(0, 0, FlatStone)) // P2 turn 2
@@ -204,7 +204,7 @@ describe("Rule 2.2: Moving Stones", () => {
   })
 
   test("Rule 2.2.1: can move multiple stones", () => {
-    let game = createNewGame(3)
+    let game = createGame(3)
     
     game = play(game, Place(0, 1)) // P1
     game = play(game, Place(0, 0)) // P2
@@ -222,7 +222,7 @@ describe("Rule 2.2: Moving Stones", () => {
   })
 
   test("Rule 2.2.1: enforces carry limit according to board size", () => {
-    let game = createNewGame(3)
+    let game = createGame(3)
 
     game = play(game, Place(0, 0)) // P1
     game = play(game, Place(0, 1)) // P2
@@ -242,7 +242,7 @@ describe("Rule 2.2: Moving Stones", () => {
   })
 
   test("Rule 2.2.1: cannot carry more stones than are in a stack", () => {
-    let game = createNewGame(3)
+    let game = createGame(3)
     
     game = play(game, Place(0, 1)) // P1
     game = play(game, Place(0, 0)) // P2
@@ -259,7 +259,7 @@ describe("Rule 2.2: Moving Stones", () => {
   })
 
   test("Rule 2.2.2: must drop at least one stone per square", () => {
-    let game = createNewGame(3)
+    let game = createGame(3)
     
     game = play(game, Place(0, 0)) // P1
     game = play(game, Place(0, 1)) // P2
@@ -276,7 +276,7 @@ describe("Rule 2.2: Moving Stones", () => {
   })
 
   test("Rule 2.2.3: can flatten standing stone", () => {
-    let game = createNewGame(5)
+    let game = createGame(5)
     
     game = play(game, Place(0, 1)) // P1
     game = play(game, Place(0, 0)) // P2
@@ -294,7 +294,7 @@ describe("Rule 2.2: Moving Stones", () => {
   })
 
   test("Rule 2.2.3: capstone must be alone when flattening", () => {
-    let game = createNewGame(5)
+    let game = createGame(5)
     
     game = play(game, Place(0, 0)) // P1
     game = play(game, Place(0, 1)) // P2
