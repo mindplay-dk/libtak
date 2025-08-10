@@ -1,7 +1,7 @@
 import { test, expect } from "vitest"
 import dedent from "dedent"
 
-import { parsePTNData, parseTurn } from "./ptn"
+import { createPTNData, parsePTNData, parseTurn } from "./ptn"
 import { Down, Left, Move, Place, Right, Up } from "../model/turns"
 import { CapStone, StandingStone } from "../model/stones"
 
@@ -218,4 +218,28 @@ test(`ignores extra content at the beginning/end of a file`, () => {
       "type": "place",
     },
   ])
+})
+
+test(`can create PTN file contents`, () => {
+  const inputPTN = dedent`
+    [Size "6"]
+    [Hello "\"World\""]
+
+    1. a6 f6
+    2. d4 c4
+    3. d3 c3
+    4. d5 c5
+    5. d2 Ce4
+    6. c2 e3
+    7. e2 b2
+    8. Cb3 e4<
+    9. d3< Sd1
+    10. a3 d1+
+  `
+
+  const { metadata, turns } = parsePTNData(inputPTN)
+
+  const outputPTN = createPTNData(turns, +metadata.get("Size")!, metadata.values)
+
+  expect(outputPTN).toBe(inputPTN)
 })

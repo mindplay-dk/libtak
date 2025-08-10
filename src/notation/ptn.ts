@@ -15,9 +15,9 @@ interface PTNData {
   turns: Turn[]
 }
 
-type PTNMetadata = {
-  values: Record<string, string>,
-  get(name: string): string | undefined,
+interface PTNMetadata {
+  values: Record<string, string>
+  get(name: string): string | undefined
 }
 
 /**
@@ -248,4 +248,64 @@ export function parseTurn(size: number, turn: string): Turn {
   }
 
   throw new Error(`Unable to parse PTN turn: ${turn}`)
+}
+
+/**
+ * Create PTN file contents from a list of Turns.
+ */
+export function createPTNData(turns: Turn[], boardSize: number, metadata: Record<string, string>): string {
+  const lines: string[] = []
+  
+  for (const [name, value] of Object.entries(metadata)) {
+    lines.push(`[${name} "${value.replace(/"/g, '\\"')}"]`)
+  }
+  
+  lines.push('')
+
+  for (let i = 0; i < turns.length; i += 2) {
+    const roundNumber = Math.floor(i / 2) + 1
+    const player1Turn = turns[i]
+    const player2Turn = turns[i + 1]
+    
+    let line = `${roundNumber}. ${formatTurn(player1Turn, boardSize)}`
+    
+    if (player2Turn) {
+      line += ` ${formatTurn(player2Turn, boardSize)}`
+    }
+    
+    lines.push(line)
+  }
+  
+  return lines.join('\n')
+}
+
+function formatTurn(turn: Turn, boardSize: number): string {
+  const position = turn.type === "place"
+    ? turn.position
+    : turn.fromPosition
+  
+  const rank = boardSize - position.rank
+  const file = String.fromCharCode('a'.charCodeAt(0) + position.file)
+  
+  if (turn.type === "place") {
+    const stoneType = turn.stone !== FlatStone
+      ? turn.stone
+      : '' // flat stone is the default: stone type is not required
+    
+    return `${stoneType}${file}${rank}`
+  } else if (turn.type === "move") {
+    const stonesMoved = turn.dropcounts.reduce((sum, count) => sum + count, 0)
+    
+    const countPrefix = stonesMoved > 1
+      ? stonesMoved.toString()
+      : '' // only 1 stone taken: count is not required
+    
+    const dropcounts = turn.dropcounts.length > 1
+      ? turn.dropcounts.join('')
+      : '' // all stones in one drop: dropcounts are not required
+    
+    return `${countPrefix}${file}${rank}${turn.direction}${dropcounts}`
+  }
+  
+  throw new Error(`Unsupported turn type: ${(turn as any).type}`)
 }
