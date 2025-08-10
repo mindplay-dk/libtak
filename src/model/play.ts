@@ -1,8 +1,8 @@
-import { updateBoard, Position, Square } from "./board";
-import { Game, Reserve } from "./game";
+import { updateBoard } from "./board";
+import { Game } from "./game";
 import { opponent } from "./players";
-import { Stone, CapStone, StandingStone, FlatStone, StoneType } from "./stones";
-import { Turn, Place, Move, Direction, Up, Down, Left, Right } from "./turns";
+import { Stone, CapStone, FlatStone } from "./stones";
+import { Turn, Up, Down, Left, Right } from "./turns";
 
 /**
  * Given a Game state and a Turn, produces the resulting Game state.

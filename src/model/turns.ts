@@ -1,4 +1,4 @@
-import { Position } from "./board.ts"
+import { Position } from "./board"
 import { FlatStone, StoneType } from "./stones"
 
 export type Turn = Move | Place

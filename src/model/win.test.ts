@@ -1,7 +1,7 @@
 import { describe, test, expect } from "vitest"
 import dedent from "dedent"
 
-import { parsePTN, parsePTNData } from "../notation/ptn"
+import { parsePTN } from "../notation/ptn"
 import { hasWinner } from "./win"
 
 describe("3.1. Road Win", () => {

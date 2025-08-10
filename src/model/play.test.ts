@@ -1,10 +1,8 @@
 import { test, expect, describe } from "vitest"
-import { verifyPlay, play } from "./play"
-import { Game, Reserve, createGame, createReserve } from "./game"
-import { Board, Position, createBoard } from "./board"
-import { PlayerNumber, Player, Player1, Player2 } from "./players"
-import { Stone, StoneType, FlatStone, StandingStone, CapStone } from "./stones"
-import { Turn, Place, Move, Direction, Up, Down, Left, Right } from "./turns"
+import { play } from "./play"
+import { createGame } from "./game"
+import { Stone, FlatStone, StandingStone, CapStone } from "./stones"
+import { Place, Move, Up, Down, Left, Right } from "./turns"
 
 describe("Rule 1.1: Board Setup", () => {
   test("Rule 1.1: cannot place out of bounds", () => {
