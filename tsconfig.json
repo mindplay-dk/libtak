@@ -2,10 +2,14 @@
   "compilerOptions": {
     "strict": true,
     "noEmit": true,
+    "declaration": true,
+    "declarationMap": true,
+    "emitDeclarationOnly": true,
+    "outDir": "dist/types",
     "target": "esnext",
-    "module": "nodenext",
-    "moduleResolution": "nodenext",
-    "allowImportingTsExtensions": true,
-    "skipLibCheck": true,
-  }
+    "module": "es2022",
+    "moduleResolution": "bundler",
+    "skipLibCheck": true
+  },
+  "include": ["src"]
 }
