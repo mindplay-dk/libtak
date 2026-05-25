@@ -2,6 +2,7 @@ import { Board, createBoard } from "./board"
 import { Player, PlayerNumber } from "./players"
 
 export type Game = {
+  type: 'game'
   board: Board
   reserve: Record<PlayerNumber, Reserve>
   
@@ -26,6 +27,7 @@ export type Reserve = {
  */
 export function createGame(size: number): Game {
   return {
+    type: 'game',
     board: createBoard(size),
     reserve: {
       1: createReserve(size),
