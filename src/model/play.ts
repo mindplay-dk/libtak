@@ -4,11 +4,19 @@ import { opponent } from "./players";
 import { Stone, CapStone, FlatStone } from "./stones";
 import { Turn, Up, Down, Left, Right } from "./turns";
 import { PlayResult, GameErrorType } from "./result";
+import { check } from './result';
 
 /**
  * Given a Game state and a Turn, produces the resulting Game state.
  */
-export function play(game: Game, turn: Turn): PlayResult {
+export function play(game: Game, turn: Turn): Game {
+  return check(tryPlay(game, turn));
+}
+
+/**
+ * Given a Game state and a Turn, produces the resulting Game state.
+ */
+export function tryPlay(game: Game, turn: Turn): PlayResult {
   const isOpening = game.turn <= 2
 
   if (isOpening) {
@@ -202,6 +210,3 @@ function checkBounds(rank: number, file: number, size: number): PlayResult | und
 
   return undefined
 }
-
-export { check } from './result'
-
